@@ -10,8 +10,8 @@ export const Signin = () => {
   const [eyeOpen, setEyeOpen] = useState(true);
   return (
     <>
-      <div className="from-primary flex h-dvh select-none justify-center bg-gradient-to-t to-white pt-20">
-        <div className="bg-background flex h-fit max-w-lg flex-col gap-6 rounded-md border p-10 text-center">
+      <div className="flex h-dvh select-none justify-center bg-gradient-to-t from-primary to-white pt-20">
+        <div className="flex h-fit max-w-lg flex-col gap-6 rounded-md border bg-background p-10 text-center">
           <h1 className="select-none text-3xl font-medium">
             Welcome to <span className="text-primary">Workflo</span>!
           </h1>
