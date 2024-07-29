@@ -6,11 +6,12 @@ import {
 } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import connectToDatabase from "@/lib/mongoose";
 import User from "@/db/User";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import { Adapter } from "next-auth/adapters";
 import { env } from "@/env";
+import clientPromise from "@/lib/MongoDbClinet";
+import { dbConnect } from "@/lib/DBConnect";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -81,8 +82,7 @@ export const authOptions: NextAuthOptions = {
           | undefined,
         req: Pick<RequestInternal, "body" | "query" | "headers" | "method">,
       ): Promise<User | null> {
-        await connectToDatabase();
-
+        await dbConnect();
         if (credentials?.mode === "signup") {
           const existingUser = await User.findOne({ email: credentials.email });
           if (existingUser) {
@@ -97,6 +97,7 @@ export const authOptions: NextAuthOptions = {
           });
 
           if (newUser) {
+            console.log("user succesfully created");
             return {
               id: newUser._id.toString(),
               email: credentials.email,
@@ -117,6 +118,7 @@ export const authOptions: NextAuthOptions = {
           if (!isValid) {
             throw new Error("Password is Incorrect");
           }
+          console.log("user succesfully loggedin");
           return {
             id: user._id.toString(),
             email: user.email,
@@ -136,11 +138,11 @@ export const authOptions: NextAuthOptions = {
      */
   ],
   secret: env.NEXTAUTH_SECRET,
-  adapter: MongoDBAdapter(connectToDatabase) as Adapter,
+  adapter: MongoDBAdapter(clientPromise) as Adapter,
   pages: {
-    signIn: "/auth/signin",
-    signOut: "/auth/signout",
-    newUser: "/auth/new-user",
+    signIn: "/signin",
+    signOut: "/signout",
+    newUser: "/signup",
   },
 };
 
