@@ -17,6 +17,7 @@ export const Signup = () => {
   const HandleSignup = async () => {
     if (name && email && password) {
       const res = await signIn("credentials", {
+        redirect: false,
         fullname: name,
         email: email,
         password: password,

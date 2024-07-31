@@ -13,26 +13,6 @@ import { env } from "@/env";
 import clientPromise from "@/lib/MongoDbClinet";
 import { dbConnect } from "@/lib/DBConnect";
 
-/**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- */
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
-  }
-
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
 interface User {
   id: string;
   email: string;
@@ -46,13 +26,10 @@ interface User {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: token.sub,
-      },
-    }),
+    session: ({ token, session }: any) => {
+      session.user.id = token.sub;
+      return session;
+    },
   },
   providers: [
     Credentials({
@@ -106,8 +83,10 @@ export const authOptions: NextAuthOptions = {
           } else {
             throw new Error("Could not create user!");
           }
-        } else {
+        }
+        if (credentials?.mode === "signin") {
           const user = await User.findOne({ email: credentials?.email });
+          console.log(user);
           if (!user) {
             throw new Error("No user found with the entered email");
           }
@@ -125,6 +104,7 @@ export const authOptions: NextAuthOptions = {
             name: user.fullname,
           };
         }
+        return null;
       },
     }),
     /**
