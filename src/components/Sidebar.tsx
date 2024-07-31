@@ -37,7 +37,10 @@ export const Sidebar = ({ TabsData }: { TabsData: TabProps[] }) => {
       ))}
       <Button className="mt-4 flex h-fit w-full items-center gap-2 rounded-xl bg-[linear-gradient(180deg,_#4C38C2_0%,_#2F2188_100%)] py-3">
         <p className="text-xl">Create New Task</p>
-        <Icons.Plus className="h-5 w-5 rounded-full bg-background text-black" />
+        <Icons.Plus
+          color="#000"
+          className="h-5 w-5 rounded-full bg-background text-black"
+        />
       </Button>
 
       <div className="flex flex-1 items-end">

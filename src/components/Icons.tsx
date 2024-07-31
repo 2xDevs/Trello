@@ -915,9 +915,9 @@ export const Icons = {
       />
     </svg>
   ),
-  Plus: (props: IconProps) => (
+  Plus: ({ color, className }: { color: string; className: string }) => (
     <svg
-      {...props}
+      className={className}
       width="25"
       height="24"
       viewBox="0 0 25 24"
@@ -926,7 +926,7 @@ export const Icons = {
     >
       <path
         d="M6.75 12H12.75M12.75 12H18.75M12.75 12V6M12.75 12V18"
-        stroke="#000"
+        stroke={color}
         stroke-width="1.5"
         stroke-linecap="round"
         stroke-linejoin="round"

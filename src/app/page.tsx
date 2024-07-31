@@ -6,23 +6,19 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList } from "@/components/ui/tabs";
 import { Sidebar } from "@/components/Sidebar";
 import { ButtonWithIconProps, FeaturesDataProps } from "@/types/types";
-import {
-  ButtonWithIconData,
-  FeaturesData,
-  StatusNavbarData,
-  TabsData,
-} from "@/config/Data";
+import { ButtonWithIconData, FeaturesData, TabsData } from "@/config/Data";
+import { Kanban } from "@/components/Kanban";
 
 export default function HomePage() {
   return (
     <>
-      <div className="h-screen w-screen">
+      <div className="max-h-dvh w-full overflow-auto">
         <Tabs defaultValue="home" className="h-full text-foreground">
           <TabsList className="w-fit items-start gap-1 p-4">
             <Sidebar TabsData={TabsData} />
           </TabsList>
 
-          <div className="flex p-4 pr-8">
+          <div className="flex max-h-dvh overflow-auto pl-4 pr-8">
             <TabsContent className="flex flex-1 flex-col" value="home">
               <div className="flex justify-between">
                 <p className="text-5xl font-semibold">Good Morning, Joe</p>
@@ -32,11 +28,11 @@ export default function HomePage() {
                 </div>
               </div>
 
-              <div className="mt-8 flex gap-4">
+              <div className="flex gap-4 pt-8">
                 <FeatureSection FeaturesData={FeaturesData} />
               </div>
 
-              <div className="mt-4 flex items-center justify-between">
+              <div className="my-4 flex items-center justify-between">
                 <div className="relative max-w-xs">
                   <Input
                     className="text-base"
@@ -50,14 +46,17 @@ export default function HomePage() {
                   <Button className="rounded-xl bg-[linear-gradient(180deg,_#4C38C2_0%,_#2F2188_100%)]">
                     <div className="flex items-center gap-2">
                       <p className="text-base">Create New</p>
-                      <Icons.Plus className="h-5 w-5 rounded-full bg-background text-black" />
+                      <Icons.Plus
+                        color="#000"
+                        className="h-5 w-5 rounded-full bg-background text-black"
+                      />
                     </div>
                   </Button>
                 </div>
               </div>
 
-              <div className="mt-4 flex flex-1 gap-4 bg-gray-400 p-4">
-                <StatusNavbar titles={StatusNavbarData} />
+              <div className="sticky top-0 flex h-fit flex-1 gap-4 bg-muted pb-4">
+                <Kanban />
               </div>
             </TabsContent>
             <TabsContent value="boards"></TabsContent>
@@ -112,21 +111,6 @@ const ButtonWithIcon = ({
             </div>
           </div>
         </Button>
-      ))}
-    </>
-  );
-};
-
-const StatusNavbar = ({ titles }: { titles: string[] }) => {
-  return (
-    <>
-      {titles.map((title, index) => (
-        <div key={index} className="flex-1">
-          <div className="flex justify-between">
-            <p className="text-xl">{title}</p>
-            <Icons.StatusMenu />
-          </div>
-        </div>
       ))}
     </>
   );

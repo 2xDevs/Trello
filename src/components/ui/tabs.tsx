@@ -12,7 +12,7 @@ const Tabs = React.forwardRef<
     orientation="vertical"
     ref={ref}
     className={cn(
-      "border-3 flex gap-1 rounded-md border-white p-1 text-muted-foreground",
+      "border-3 flex gap-1 rounded-md border-white text-muted-foreground",
       className,
     )}
     {...props}
