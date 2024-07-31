@@ -915,7 +915,7 @@ export const Icons = {
       />
     </svg>
   ),
-  Plus: ({ color, className }: { color: string; className: string }) => (
+  Plus: ({ color, className }: { color: string; className?: string }) => (
     <svg
       className={className}
       width="25"

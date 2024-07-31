@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SheetTrigger } from "@/components/ui/sheet";
 
 export const Kanban = () => {
   return (
@@ -167,7 +168,7 @@ const Column = ({ title, cards, status, setCards }: ColumnProps) => {
 
   return (
     <div className="flex-1">
-      <div className="sticky top-0 flex items-center justify-between bg-gray-900 px-2 py-4 text-white">
+      <div className="sticky top-0 flex items-center justify-between bg-muted px-2 py-4">
         <h3 className="text-xl">{title}</h3>
         <span className="rounded text-sm text-neutral-400">
           <Icons.StatusMenu />
@@ -262,14 +263,16 @@ const DropIndicator = ({ beforeId, status }: DropIndicatorProps) => {
 const AddCardButton = () => {
   return (
     <>
-      <Button className="w-full rounded-xl bg-neutral-900 px-3 py-5 hover:bg-neutral-800">
-        <div className="flex w-full items-center justify-between gap-2">
-          <p className="text-base font-normal">Add New</p>
-          <div>
-            <Icons.Plus color="#fff" className="h-6 w-6" />
+      <SheetTrigger asChild>
+        <Button className="w-full rounded-xl bg-neutral-900 px-3 py-5 hover:bg-neutral-800">
+          <div className="flex w-full items-center justify-between gap-2">
+            <p className="text-base font-normal">Add New</p>
+            <div>
+              <Icons.Plus color="#fff" className="h-6 w-6" />
+            </div>
           </div>
-        </div>
-      </Button>
+        </Button>
+      </SheetTrigger>
     </>
   );
 };
@@ -312,25 +315,6 @@ const DEFAULT_CARDS: CardType[] = [
     created: new Date(),
     status: "inProgress",
   },
-  {
-    title: "Condect User Feedback Survey",
-    description: "Collect and analyze user feedback to improve app features.",
-    id: "6",
-    priority: "Low",
-    deadline: "2024-08-05",
-    created: new Date(),
-    status: "inProgress",
-  },
-  {
-    title: "Condect User Feedback Survey",
-    description: "Collect and analyze user feedback to improve app features.",
-    id: "6",
-    priority: "Low",
-    deadline: "2024-08-05",
-    created: new Date(),
-    status: "inProgress",
-  },
-
   {
     title: "Condect User Feedback Survey",
     description: "Collect and analyze user feedback to improve app features.",
