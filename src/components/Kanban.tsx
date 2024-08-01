@@ -1,17 +1,20 @@
 "use client";
 
-import React, {
-  Dispatch,
-  SetStateAction,
-  useState,
-  DragEvent,
-  FormEvent,
-} from "react";
+import React, { useState, DragEvent } from "react";
 import { motion } from "framer-motion";
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SheetTrigger } from "@/components/ui/sheet";
+import {
+  CardProps,
+  CardType,
+  ColumnProps,
+  ColumnType,
+  DropIndicatorProps,
+} from "@/types/types";
+import { setStatus, useAppDispatch } from "@/store/store";
+import { useTodoActions } from "@/hooks/useTodoActions";
 
 export const Kanban = () => {
   return (
@@ -26,40 +29,22 @@ const Board = () => {
 
   return (
     <div className="flex h-full w-full flex-1 gap-8">
-      <Column title="To do" status="todo" cards={cards} setCards={setCards} />
-      <Column
-        title="In progress"
-        status="inProgress"
-        cards={cards}
-        setCards={setCards}
-      />
-      <Column
-        title="Under review"
-        status="underReview"
-        cards={cards}
-        setCards={setCards}
-      />
-      <Column
-        title="Finished"
-        status="done"
-        cards={cards}
-        setCards={setCards}
-      />
+      <Column status="To do" cards={cards} setCards={setCards} />
+      <Column status="In progress" cards={cards} setCards={setCards} />
+      <Column status="Under review" cards={cards} setCards={setCards} />
+      <Column status="Finished" cards={cards} setCards={setCards} />
     </div>
   );
 };
 
-type ColumnProps = {
-  title: string;
-  cards: CardType[];
-  status: ColumnType;
-  setCards: Dispatch<SetStateAction<CardType[]>>;
-};
-
-const Column = ({ title, cards, status, setCards }: ColumnProps) => {
+const Column = ({ cards, status, setCards }: ColumnProps) => {
   const [active, setActive] = useState(false);
 
   const handleDragStart = (e: DragEvent, card: CardType) => {
+    if (!card.id) {
+      console.log("No card Id");
+      return;
+    }
     e.dataTransfer.setData("cardId", card.id);
   };
 
@@ -168,8 +153,8 @@ const Column = ({ title, cards, status, setCards }: ColumnProps) => {
 
   return (
     <div className="flex-1">
-      <div className="sticky top-0 flex items-center justify-between bg-muted px-2 py-4">
-        <h3 className="text-xl">{title}</h3>
+      <div className="sticky top-0 flex items-center justify-between px-2 py-4">
+        <h3 className="text-xl">{status}</h3>
         <span className="rounded text-sm text-neutral-400">
           <Icons.StatusMenu />
         </span>
@@ -186,14 +171,10 @@ const Column = ({ title, cards, status, setCards }: ColumnProps) => {
           return <Card key={c.id} {...c} handleDragStart={handleDragStart} />;
         })}
         <DropIndicator beforeId={null} status={status} />
-        <AddCardButton />
+        <AddCardButton status={status} />
       </div>
     </div>
   );
-};
-
-type CardProps = CardType & {
-  handleDragStart: Function;
 };
 
 const Card = ({
@@ -204,50 +185,66 @@ const Card = ({
   priority,
   deadline,
   created,
+  content,
   handleDragStart,
 }: CardProps) => {
+  if (!id) {
+    console.log("No CardId");
+    return;
+  }
+  const { handleAllTodoChanges } = useTodoActions();
+  const data = {
+    title,
+    status,
+    priority,
+    deadline,
+    description,
+    content,
+  };
+
   return (
     <>
       <DropIndicator beforeId={id} status={status} />
-      <motion.div
-        layout
-        layoutId={id}
-        draggable="true"
-        onDragStart={(e: any) => handleDragStart(e, { title, id, status })}
-        className="mb-4 cursor-grab rounded-lg border border-neutral-700 p-3 active:cursor-grabbing"
-      >
-        <div className="w-full space-y-4 text-accent-foreground">
-          <div className="">
-            <h3 className="text-xl font-medium text-secondary-foreground">
-              {title}
-            </h3>
-            <p className="text-base font-normal">{description}</p>
+      <SheetTrigger asChild>
+        <motion.div
+          onClick={() => {
+            console.log(data);
+            handleAllTodoChanges(data);
+          }}
+          layout
+          layoutId={id}
+          draggable="true"
+          onDragStart={(e: any) => handleDragStart(e, { title, id, status })}
+          className="mb-4 cursor-grab rounded-lg border border-neutral-700 p-3 active:cursor-grabbing"
+        >
+          <div className="w-full space-y-4 text-accent-foreground">
+            <div className="">
+              <h3 className="text-xl font-medium text-secondary-foreground">
+                {title}
+              </h3>
+              <p className="text-base font-normal">{description}</p>
+            </div>
+            <div
+              className={cn(
+                "w-fit rounded-xl px-2.5 py-1.5 text-white",
+                (priority == "Low" && "bg-green-700") ||
+                  (priority == "Medium" && "bg-yellow-500") ||
+                  (priority == "Urgent" && "bg-red-700") ||
+                  "",
+              )}
+            >
+              {priority}
+            </div>
+            <div className="flex gap-2">
+              <Icons.Time />
+              <p>{deadline}</p>
+            </div>
+            <p>{"1 hr ago"}</p>
           </div>
-          <div
-            className={cn(
-              "w-fit rounded-xl px-2.5 py-1.5 text-white",
-              (priority == "Low" && "bg-green-700") ||
-                (priority == "Medium" && "bg-yellow-500") ||
-                (priority == "Urgent" && "bg-red-700") ||
-                "",
-            )}
-          >
-            {priority}
-          </div>
-          <div className="flex gap-2">
-            <Icons.Time />
-            <p>{deadline}</p>
-          </div>
-          <p>{"1 hr ago"}</p>
-        </div>
-      </motion.div>
+        </motion.div>
+      </SheetTrigger>
     </>
   );
-};
-
-type DropIndicatorProps = {
-  beforeId: string | null;
-  status: string;
 };
 
 const DropIndicator = ({ beforeId, status }: DropIndicatorProps) => {
@@ -260,11 +257,16 @@ const DropIndicator = ({ beforeId, status }: DropIndicatorProps) => {
   );
 };
 
-const AddCardButton = () => {
+const AddCardButton = ({ status }: { status: ColumnType }) => {
+  const { handleStatusChange } = useTodoActions();
+
   return (
     <>
       <SheetTrigger asChild>
-        <Button className="w-full rounded-xl bg-neutral-900 px-3 py-5 hover:bg-neutral-800">
+        <Button
+          onClick={() => handleStatusChange(status)}
+          className="w-full rounded-xl bg-neutral-900 px-3 py-5 hover:bg-neutral-800"
+        >
           <div className="flex w-full items-center justify-between gap-2">
             <p className="text-base font-normal">Add New</p>
             <div>
@@ -277,20 +279,6 @@ const AddCardButton = () => {
   );
 };
 
-type ColumnType = "todo" | "inProgress" | "underReview" | "done";
-type PriorityType = "Low" | "Medium" | "Urgent";
-
-type CardType = {
-  id: string;
-  title: string;
-  description?: string;
-  content?: string;
-  deadline?: string;
-  created?: Date;
-  status: ColumnType;
-  priority?: PriorityType;
-};
-
 const DEFAULT_CARDS: CardType[] = [
   // TODO
   {
@@ -301,7 +289,7 @@ const DEFAULT_CARDS: CardType[] = [
     priority: "Urgent",
     deadline: "2024-08-15",
     created: new Date(),
-    status: "todo",
+    status: "To do",
   },
 
   // IN PROGRESS
@@ -313,7 +301,7 @@ const DEFAULT_CARDS: CardType[] = [
     priority: "Medium",
     deadline: "2024-08-15",
     created: new Date(),
-    status: "inProgress",
+    status: "In progress",
   },
   {
     title: "Condect User Feedback Survey",
@@ -322,7 +310,7 @@ const DEFAULT_CARDS: CardType[] = [
     priority: "Low",
     deadline: "2024-08-05",
     created: new Date(),
-    status: "inProgress",
+    status: "In progress",
   },
 
   // UNDER REVIEW
@@ -333,7 +321,7 @@ const DEFAULT_CARDS: CardType[] = [
     priority: "Urgent",
     deadline: "2024-08-20",
     created: new Date(),
-    status: "underReview",
+    status: "Under review",
   },
 
   // DONE
@@ -345,6 +333,6 @@ const DEFAULT_CARDS: CardType[] = [
     priority: "Medium",
     deadline: "2024-07-30",
     created: new Date(),
-    status: "done",
+    status: "Finished",
   },
 ];

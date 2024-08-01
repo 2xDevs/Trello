@@ -2,9 +2,11 @@ import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { SheetTrigger } from "@/components/ui/sheet";
 import { TabsTrigger } from "@/components/ui/tabs";
+import { useTodoActions } from "@/hooks/useTodoActions";
 import { TabProps } from "@/types/types";
 
 export const Sidebar = ({ TabsData }: { TabsData: TabProps[] }) => {
+  const { handleStatusChange } = useTodoActions();
   return (
     <>
       <div className="mb-4 w-full">
@@ -37,7 +39,10 @@ export const Sidebar = ({ TabsData }: { TabsData: TabProps[] }) => {
         </TabsTrigger>
       ))}
       <SheetTrigger asChild>
-        <Button className="mt-4 flex h-fit w-full items-center gap-2 rounded-xl bg-[linear-gradient(180deg,_#4C38C2_0%,_#2F2188_100%)] py-3">
+        <Button
+          onClick={() => handleStatusChange("To do")}
+          className="mt-4 flex h-fit w-full items-center gap-2 rounded-xl bg-[linear-gradient(180deg,_#4C38C2_0%,_#2F2188_100%)] py-3"
+        >
           <p className="text-xl">Create New Task</p>
           <Icons.Plus
             color="#000"

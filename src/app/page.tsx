@@ -11,18 +11,20 @@ import { Kanban } from "@/components/Kanban";
 import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { AddTodoModal } from "@/components/AddTodoModal";
 import { ButtonWithIcon } from "@/components/ButtonWithIcon";
+import { useTodoActions } from "@/hooks/useTodoActions";
 
 export default function HomePage() {
+  const { handleStatusChange } = useTodoActions();
   return (
     <>
       <Sheet>
         <div className="max-h-dvh w-full overflow-auto">
           <Tabs defaultValue="home" className="h-full text-foreground">
-            <TabsList className="w-fit items-start gap-1 p-4">
+            <TabsList className="w-fit items-start gap-1 bg-background p-4">
               <Sidebar TabsData={TabsData} />
             </TabsList>
 
-            <div className="flex max-h-dvh overflow-auto pl-4 pr-8">
+            <div className="flex max-h-dvh overflow-auto bg-muted pl-4 pr-8">
               <TabsContent className="flex flex-1 flex-col" value="home">
                 <div className="flex justify-between pt-4">
                   <p className="text-5xl font-semibold">Good Morning, Joe</p>
@@ -51,7 +53,10 @@ export default function HomePage() {
                     ))}
 
                     <SheetTrigger asChild>
-                      <Button className="rounded-xl bg-[linear-gradient(180deg,_#4C38C2_0%,_#2F2188_100%)]">
+                      <Button
+                        onClick={() => handleStatusChange("To do")}
+                        className="rounded-xl bg-[linear-gradient(180deg,_#4C38C2_0%,_#2F2188_100%)]"
+                      >
                         <div className="flex items-center gap-2">
                           <p className="text-base">Create New</p>
                           <Icons.Plus
@@ -64,7 +69,7 @@ export default function HomePage() {
                   </div>
                 </div>
 
-                <div className="sticky top-0 flex h-fit flex-1 gap-4 bg-muted pb-4">
+                <div className="sticky top-0 flex h-fit flex-1 gap-4 bg-muted bg-white pb-4">
                   <Kanban />
                 </div>
               </TabsContent>
