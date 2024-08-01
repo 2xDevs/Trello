@@ -1,3 +1,5 @@
+import AuthProvider from "@/components/AuthProvider";
+import { Toaster } from "@/components/ui/toaster";
 import { StoreProvider } from "@/store/StoreProvider";
 import "@/styles/globals.css";
 
@@ -16,7 +18,12 @@ export default function RootLayout({
   return (
     <StoreProvider>
       <html lang="en" className={`${GeistSans.variable}`}>
-        <body>{children}</body>
+        <AuthProvider>
+          <body>
+            {children}
+            <Toaster />
+          </body>
+        </AuthProvider>
       </html>
     </StoreProvider>
   );

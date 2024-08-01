@@ -41,4 +41,4 @@ export const dbConnect = async () => {
   }
   cached.conn = await cached.promise;
   return cached.conn;
-}
+};

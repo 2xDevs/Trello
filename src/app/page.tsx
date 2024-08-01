@@ -13,10 +13,19 @@ import { AddTodoModal } from "@/components/AddTodoModal";
 import { ButtonWithIcon } from "@/components/ButtonWithIcon";
 import { useTodoActions } from "@/hooks/useTodoActions";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect("/signin?callbackUrl=/");
+    },
+  });
   const [currentTab, setCurrentTab] = useState("home");
   const { handleStatusChange } = useTodoActions();
+
   return (
     <>
       <Sheet>
@@ -27,13 +36,16 @@ export default function HomePage() {
             className="h-full text-foreground"
           >
             <TabsList className="w-fit items-start gap-1 bg-background p-4">
-              <Sidebar currentTab={currentTab} TabsData={TabsData} />
+              <Sidebar
+                currentTab={currentTab}
+                TabsData={TabsData}
+              />
             </TabsList>
 
             <div className="flex max-h-dvh min-h-dvh w-full overflow-auto bg-muted pl-4 pr-8">
               <TabsContent className="flex flex-1 flex-col" value="home">
                 <div className="flex justify-between pt-4">
-                  <p className="text-5xl font-semibold">Good Morning, Joe</p>
+                  <p className="text-5xl font-semibold">Good Morning, {session.data?.user?.name}</p>
                   <div className="flex items-center gap-2">
                     <span className="text-lg">Help & feedback</span>
                     <Icons.Help />

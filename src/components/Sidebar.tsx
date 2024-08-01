@@ -1,10 +1,14 @@
+"use client";
 import { Icons } from "@/components/Icons";
+import { SignoutButton } from "@/components/SignoutButton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { SheetTrigger } from "@/components/ui/sheet";
 import { TabsTrigger } from "@/components/ui/tabs";
 import { useTodoActions } from "@/hooks/useTodoActions";
 import { cn } from "@/lib/utils";
 import { TabProps } from "@/types/types";
+import { signOut, useSession } from "next-auth/react";
 
 export const Sidebar = ({
   TabsData,
@@ -13,17 +17,21 @@ export const Sidebar = ({
   TabsData: TabProps[];
   currentTab: string;
 }) => {
+   const session = useSession({
+     required: true,
+   });
   const { handleStatusChange } = useTodoActions();
   return (
     <>
       <div className="mb-4 w-full">
         <div className="flex items-center gap-2">
-          <img
-            className="aspect-square h-8 rounded-full md:h-10"
-            src="https://picsum.photos/200"
-          />
+          <Avatar>
+            <AvatarImage src="https://github.com/shadcn.png" />
+            <AvatarFallback className="capitalize">{session.data?.user?.name?.at(0)}</AvatarFallback>
+          </Avatar>
+
           <span className="text-lg font-medium text-foreground md:text-xl">
-            Username
+            {session.data?.user?.name}
           </span>
         </div>
         <div className="g mt-2 flex items-center justify-between gap-2">
@@ -32,7 +40,11 @@ export const Sidebar = ({
             <Icons.Loading className="aspect-square h-6" />
             <Icons.DoubleArrowRight className="aspect-square h-6" />
           </div>
-          <Button className="h-fit px-3 py-2 font-normal" variant={"ghost"}>
+          <Button
+            onClick={() => signOut({ callbackUrl: "/signin" })}
+            className="h-fit px-3 py-2 font-normal"
+            variant={"ghost"}
+          >
             Logout
           </Button>
         </div>
