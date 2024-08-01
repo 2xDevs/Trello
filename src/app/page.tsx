@@ -12,19 +12,25 @@ import { Sheet, SheetTrigger } from "@/components/ui/sheet";
 import { AddTodoModal } from "@/components/AddTodoModal";
 import { ButtonWithIcon } from "@/components/ButtonWithIcon";
 import { useTodoActions } from "@/hooks/useTodoActions";
+import { useState } from "react";
 
 export default function HomePage() {
+  const [currentTab, setCurrentTab] = useState("home");
   const { handleStatusChange } = useTodoActions();
   return (
     <>
       <Sheet>
-        <div className="max-h-dvh w-full overflow-auto">
-          <Tabs defaultValue="home" className="h-full text-foreground">
+        <div className="min-h-dvh w-full overflow-auto">
+          <Tabs
+            onValueChange={(value) => setCurrentTab(value)}
+            defaultValue="home"
+            className="h-full text-foreground"
+          >
             <TabsList className="w-fit items-start gap-1 bg-background p-4">
-              <Sidebar TabsData={TabsData} />
+              <Sidebar currentTab={currentTab} TabsData={TabsData} />
             </TabsList>
 
-            <div className="flex max-h-dvh overflow-auto bg-muted pl-4 pr-8">
+            <div className="flex max-h-dvh min-h-dvh w-full overflow-auto bg-muted pl-4 pr-8">
               <TabsContent className="flex flex-1 flex-col" value="home">
                 <div className="flex justify-between pt-4">
                   <p className="text-5xl font-semibold">Good Morning, Joe</p>
@@ -41,7 +47,7 @@ export default function HomePage() {
                 <div className="my-4 flex items-center justify-between">
                   <div className="relative max-w-xs">
                     <Input
-                      className="text-base"
+                      className="bg-background text-base focus-visible:ring-0 focus-visible:ring-offset-0"
                       type="search"
                       placeholder="Search"
                     />

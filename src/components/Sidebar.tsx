@@ -3,9 +3,16 @@ import { Button } from "@/components/ui/button";
 import { SheetTrigger } from "@/components/ui/sheet";
 import { TabsTrigger } from "@/components/ui/tabs";
 import { useTodoActions } from "@/hooks/useTodoActions";
+import { cn } from "@/lib/utils";
 import { TabProps } from "@/types/types";
 
-export const Sidebar = ({ TabsData }: { TabsData: TabProps[] }) => {
+export const Sidebar = ({
+  TabsData,
+  currentTab,
+}: {
+  TabsData: TabProps[];
+  currentTab: string;
+}) => {
   const { handleStatusChange } = useTodoActions();
   return (
     <>
@@ -31,7 +38,14 @@ export const Sidebar = ({ TabsData }: { TabsData: TabProps[] }) => {
         </div>
       </div>
       {TabsData.map((data, index) => (
-        <TabsTrigger key={index} className="w-full" value={data.name}>
+        <TabsTrigger
+          key={index}
+          className={cn(
+            currentTab == data.name ? "outline outline-1 outline-accent" : "",
+            "w-full",
+          )}
+          value={data.name}
+        >
           <div className="flex items-center gap-4">
             <data.icon />
             <p className="text-base capitalize">{data.name}</p>
